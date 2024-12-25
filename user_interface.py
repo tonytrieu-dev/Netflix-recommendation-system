@@ -12,7 +12,7 @@ class UserInterface:
         print('(Type "search" followed by a word to search for titles)\n')
         
         while True:
-            title = input('Enter a title. Type "done" after you have added your desired amount of titles): ').strip()
+            title = input('Enter a title. Type "done" after you have added your desired amount of titles: ').strip()
             
             if title.lower() in ['done', 'skip']:
                 break

@@ -12,7 +12,7 @@ def main():
     content_recommender = ContentRecommender(data_manager, similarity_calculator)
     user_based_recommender = UserBasedRecommender(data_manager, similarity_calculator)
     hybrid_recommender = HybridRecommender(content_recommender, user_based_recommender)
-    ui = UserInterface(data_manager)
+    user_interface = UserInterface(data_manager)
 
     print('Welcome to the Netflix Recommendation System!')
     
@@ -29,18 +29,27 @@ def main():
 
     try:
         data_manager.load_content(content_type)
-        user_ratings = ui.collect_user_ratings()
+        user_ratings = user_interface.collect_user_ratings()
 
+        while True:
+            try:
+                number_recommendations = int(input('\nHow many recommendations do you want? '))
+                if number_recommendations > 0:
+                    break
+                else:
+                    print('Please enter a positive number.')
+            except ValueError:
+                print('Invalid input. Please enter an integer.')
         
         recent_title = input(f'\nEnter a {last_watched_content} you have most recently watched: ').strip()
         while recent_title not in data_manager.data['title'].values:
             print('Title not found')
             recent_title = input(f'Enter a {last_watched_content} you have most recently watched: ').strip()
 
-        print('\nFinding recommendations...')
-        recommendations = hybrid_recommender.get_recommendations(recent_title, user_ratings)
+        print('\nPlease wait while the system generates recommendations...')
+        recommendations = hybrid_recommender.get_recommendations(recent_title, user_ratings, number_recommendations)
         
-        print(f'\nBased on your preferences, we recommend these {content_type}:')
+        print(f'\nBased on your preferences, we recommend these {content_type}:\n')
         for index, title in enumerate(recommendations, 1):
             print(f'{index}. {title}')
             

@@ -9,7 +9,7 @@ class ContentRecommender:
         self.data_manager = data_manager
         self.similarity_calculator = similarity_calculator
 
-    def find_similar_content(self, title: str, count: int = 5) -> List[tuple]:
+    def find_similar_content(self, title: str, count: int) -> List[tuple]:
         reference_description = self.data_manager.data[
             self.data_manager.data['title'] == title]['description'].iloc[0]
         
@@ -26,7 +26,7 @@ class UserBasedRecommender:
         self.data_manager = data_manager
         self.similarity_calculator = similarity_calculator
 
-    def recommend_from_ratings(self, user_ratings: Dict[str, float], count: int = 5) -> List[tuple]:
+    def recommend_from_ratings(self, user_ratings: Dict[str, float], count: int) -> List[tuple]:
         if not user_ratings:
             return []
             

@@ -9,9 +9,9 @@ class HybridRecommender:
         self.user_based_recommender = user_based_recommender
 
     def get_recommendations(self, title: str, user_ratings: Dict[str, float], 
-                          count: int = 5) -> List[str]:
-        content_recommendations = self.content_recommender.find_similar_content(title)
-        user_recommendations = self.user_based_recommender.recommend_from_ratings(user_ratings)
+                          count: int) -> List[str]:
+        content_recommendations = self.content_recommender.find_similar_content(title, count)
+        user_recommendations = self.user_based_recommender.recommend_from_ratings(user_ratings, count)
         
         combined_scores = {}
         for title, score in content_recommendations:
