@@ -1,6 +1,6 @@
 # Netflix Recommendation System
 
-A Python package that provides personalized movie and TV show recommendations using content-based and hybrid recommendation approaches.
+A Python package that provides personalized movie and TV show recommendations using hybrid-based recommendation.
 
 ## Installation
 
