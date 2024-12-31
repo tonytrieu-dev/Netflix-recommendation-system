@@ -33,7 +33,3 @@ recommendations = recommender.get_recommendations("The Matrix")
 - pandas
 - numpy
 - scikit-learn
-
-## License
-
-MIT License
