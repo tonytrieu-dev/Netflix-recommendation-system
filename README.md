@@ -1,6 +1,6 @@
 # Netflix Recommendation System
 
-A Python package that provides personalized movie and TV show recommendations using hybrid-based recommendation.
+A Python package that provides personalized Netflix recommendations using hybrid-based recommendation.
 
 ## Installation
 
@@ -10,10 +10,9 @@ pip install netflix-recommender
 
 ## Features
 
-- Content-based recommendation system for movies and TV shows
-- Hybrid recommendation system combining multiple approaches
+- Hybrid recommendation system that uses content-based filtering and collaborative filtering
 - Easy-to-use interface for getting personalized recommendations
-- Built-in dataset management for Netflix content
+- Built-in dataset management for some Netflix content
 
 ## Quick Start
 
