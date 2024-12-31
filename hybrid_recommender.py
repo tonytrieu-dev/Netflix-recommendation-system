@@ -1,5 +1,6 @@
 from typing import Dict, List
-from recommender import ContentRecommender, UserBasedRecommender
+from netflix_recommender.recommender import ContentRecommender, UserBasedRecommender
+from netflix_recommender.data_manager import DataManager
 
 
 class HybridRecommender:
@@ -21,4 +22,3 @@ class HybridRecommender:
                 
         sorted_recommendations = sorted(combined_scores.items(), key=lambda x: x[1], reverse=True)
         return [title for title, _ in sorted_recommendations[:count]]
-    
