@@ -1,5 +1,5 @@
 from typing import Dict
-from data_manager import DataManager
+from netflix_recommender.data_manager import DataManager
 
 
 class UserInterface:

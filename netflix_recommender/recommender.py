@@ -1,5 +1,5 @@
-from data_manager import DataManager
-from similarity import SimilarityCalculator
+from netflix_recommender.data_manager import DataManager
+from netflix_recommender.similarity import SimilarityCalculator
 from typing import Dict, List
 import pandas as pd
 
@@ -48,4 +48,3 @@ class UserBasedRecommender:
             similarity = self.similarity_calculator.calculate_text_similarity(rated_description, content['description'])
             total_score += similarity * (rating / 10.0)
         return total_score
-    
