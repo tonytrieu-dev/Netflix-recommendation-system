@@ -1,6 +1,6 @@
 # Netflix Recommendation System
 
-A Python package that provides personalized Netflix recommendations using hybrid-based recommendation.
+A Python package that provides personalized Netflix recommendations using a simple hybrid-based recommendation system.
 
 ## Installation
 
@@ -42,7 +42,3 @@ recommendations = recommender.get_recommendations("The Matrix")
 - pandas
 - numpy
 - scikit-learn
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
