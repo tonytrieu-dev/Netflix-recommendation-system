@@ -13,6 +13,8 @@ shows_path = os.path.join(current_dir, 'tv_shows.csv')
 
 # Initialize components
 data_manager = DataManager(movies_path=movies_path, shows_path=shows_path)
+# Load both movies and TV shows
+data_manager.load_content('movies')  # This loads movies into data_manager.data
 similarity_calculator = SimilarityCalculator()
 recommender = ContentRecommender(data_manager, similarity_calculator)
 
@@ -27,6 +29,10 @@ def get_recommendations():
     count = data.get('count', 5)
     
     try:
+        # First check if the title exists in our dataset
+        if title not in data_manager.data['title'].values:
+            return jsonify({'error': f'Title "{title}" not found in our database'}), 404
+            
         similar_content = recommender.find_similar_content(title, count)
         # Convert the list of tuples to a list of titles for the frontend
         recommendations = [title for title, _ in similar_content]
