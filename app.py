@@ -27,7 +27,9 @@ def get_recommendations():
     count = data.get('count', 5)
     
     try:
-        recommendations = recommender.recommend_from_title(title, count)
+        similar_content = recommender.find_similar_content(title, count)
+        # Convert the list of tuples to a list of titles for the frontend
+        recommendations = [title for title, _ in similar_content]
         return jsonify({'recommendations': recommendations})
     except Exception as e:
         return jsonify({'error': str(e)}), 400
