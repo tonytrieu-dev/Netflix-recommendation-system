@@ -1,10 +1,10 @@
 from typing import Dict, List
-from netflix_recommender.recommender import ContentBasedRecommender
+from netflix_recommender.recommender import ContentRecommender, UserBasedRecommender
 from netflix_recommender.data_manager import DataManager
 
 
 class HybridRecommender:
-    def __init__(self, content_recommender: ContentBasedRecommender, 
+    def __init__(self, content_recommender: ContentRecommender, 
                  user_based_recommender: UserBasedRecommender):
         self.content_recommender = content_recommender
         self.user_based_recommender = user_based_recommender

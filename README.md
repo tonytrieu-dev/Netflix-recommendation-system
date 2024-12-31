@@ -1,6 +1,6 @@
 # Netflix Recommendation System
 
-A Python package that provides personalized Netflix recommendations using a simple hybrid-based recommendation system.
+A Python package that provides personalized Netflix recommendations using hybrid-based recommendation.
 
 ## Installation
 
@@ -27,13 +27,16 @@ pip install -e .
 ## Quick Start
 
 ```python
-from netflix_recommender import HybridRecommender
+from netflix_recommender import ContentRecommender, DataManager
+from netflix_recommender.similarity import SimilarityCalculator
 
-# Initialize the recommender
-recommender = HybridRecommender()
+# Initialize components
+data_manager = DataManager()
+similarity_calculator = SimilarityCalculator()
+recommender = ContentRecommender(data_manager, similarity_calculator)
 
 # Get recommendations
-recommendations = recommender.get_recommendations("The Matrix")
+recommendations = recommender.recommend_from_title("The Matrix", 5)
 ```
 
 ## Requirements
