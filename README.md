@@ -42,7 +42,3 @@ recommendations = recommender.get_recommendations("The Matrix")
 - pandas
 - numpy
 - scikit-learn
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
