@@ -2,11 +2,17 @@ from flask import Flask, render_template, request, jsonify
 from recommender import ContentRecommender
 from data_manager import DataManager
 from similarity import SimilarityCalculator
+import os
 
 app = Flask(__name__)
 
+# Define paths to data files
+current_dir = os.path.dirname(os.path.abspath(__file__))
+movies_path = os.path.join(current_dir, 'movies.csv')
+shows_path = os.path.join(current_dir, 'tv_shows.csv')
+
 # Initialize components
-data_manager = DataManager()
+data_manager = DataManager(movies_path=movies_path, shows_path=shows_path)
 similarity_calculator = SimilarityCalculator()
 recommender = ContentRecommender(data_manager, similarity_calculator)
 
