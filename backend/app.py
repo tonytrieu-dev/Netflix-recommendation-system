@@ -27,16 +27,22 @@ def get_recommendations():
     number_of_recommendations = data.get('count', 5)
     
     try:
-        # Check if title exists in dataset (exact match only)
+        # Get all titles and create a case-insensitive mapping
         all_titles = data_manager.data['title'].tolist()
-        if title not in all_titles:
+        title_mapping = {t.lower(): t for t in all_titles}
+        
+        # Check if the lowercase version of the title exists
+        if title.lower() not in title_mapping:
             return jsonify({
                 'error': f'Title "{title}" not found in our database. Please check the title and try again.',
                 'available_titles': all_titles[:10]  # Show first 10 titles as suggestions
             }), 404
             
+        # Get the correctly cased title from our mapping
+        correct_title = title_mapping[title.lower()]
+            
         # Get recommendations with descriptions
-        similar_content = recommender.find_similar_content(title, number_of_recommendations)
+        similar_content = recommender.find_similar_content(correct_title, number_of_recommendations)
         recommendations = []
         
         for rec_title, similarity in similar_content:

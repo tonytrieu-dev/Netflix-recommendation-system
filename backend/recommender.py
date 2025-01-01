@@ -22,21 +22,27 @@ class ContentRecommender:
         Returns:
             List of (title, similarity_score) tuples
         """
-        # Strict title check using exact match
-        if title not in set(self.data_manager.data['title'].values):
+        # Create case-insensitive mapping of titles
+        title_mapping = {t.lower(): t for t in self.data_manager.data['title'].values}
+        
+        # Check if title exists (case-insensitive)
+        if title.lower() not in title_mapping:
             raise ValueError(f"Title '{title}' not found in dataset")
 
+        # Get the correctly cased title
+        correct_title = title_mapping[title.lower()]
+        
         # Get the reference movie data
-        title_mask = self.data_manager.data['title'] == title
+        title_mask = self.data_manager.data['title'] == correct_title
         if not title_mask.any():
             raise ValueError(f"Title '{title}' not found in dataset")
-        
+            
         reference_movie = self.data_manager.data[title_mask].iloc[0].to_dict()
         
         # Calculate similarity with all other movies
         similarities = []
         for _, content in self.data_manager.data.iterrows():
-            if content['title'] != title:
+            if content['title'] != correct_title:  # Use correct_title for comparison
                 similarity = self.similarity_calculator.calculate_content_similarity(
                     reference_movie,
                     content.to_dict()
@@ -49,12 +55,12 @@ class ContentRecommender:
         # Verify all recommended titles exist in the dataset
         valid_recommendations = [
             (t, s) for t, s in sorted_similarities[:number_of_recommendations]
-            if t in set(self.data_manager.data['title'].values)
+            if t in self.data_manager.data['title'].values
         ]
         
         if not valid_recommendations:
             raise ValueError("No valid recommendations found")
-        
+            
         return valid_recommendations
 
 
