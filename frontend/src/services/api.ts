@@ -2,8 +2,14 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:5000';
 
+export interface MovieRecommendation {
+  title: string;
+  description: string;
+  similarity: number;
+}
+
 interface RecommendationResponse {
-  recommendations: string[];
+  recommendations: MovieRecommendation[];
 }
 
 export async function getRecommendations(title: string, recommendationCount: number): Promise<RecommendationResponse> {

@@ -23,19 +23,29 @@ recommender = ContentRecommender(data_manager, similarity_calculator)
 def get_recommendations():
     data = request.get_json()
     title = data.get('title')
-    count = data.get('count', 5)
+    number_of_recommendations = data.get('count', 5)
     
     try:
         # First check if the title exists in our dataset
         if title not in data_manager.data['title'].values:
             return jsonify({'error': f'Title "{title}" not found in our database'}), 404
             
-        similar_content = recommender.find_similar_content(title, count)
-        # Convert the list of tuples to a list of titles for the frontend
-        recommendations = [title for title, _ in similar_content]
+        # Get recommendations with descriptions
+        similar_content = recommender.find_similar_content(title, number_of_recommendations)
+        recommendations = []
+        
+        for title, similarity in similar_content:
+            description = data_manager.data[data_manager.data['title'] == title]['description'].iloc[0]
+            recommendations.append({
+                'title': title,
+                'description': description,
+                'similarity': similarity
+            })
+            
         return jsonify({'recommendations': recommendations})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        
+    except Exception as error:
+        return jsonify({'error': str(error)}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)
