@@ -51,6 +51,21 @@ const StyledSelect = styled(Select)(() => ({
   }
 }));
 
+const StyledFormControl = styled(FormControl)(() => ({
+  '& .MuiInputLabel-root': {
+    color: 'rgba(255, 255, 255, 0.7)',
+    '&.Mui-focused': {
+      color: '#e50914',
+    },
+  },
+  '& .MuiFormLabel-root': {
+    transform: 'translate(0, -20px) scale(0.85)',
+    '&.MuiInputLabel-shrink': {
+      transform: 'translate(0, -20px) scale(0.85)',
+    },
+  },
+}));
+
 interface SearchBarProps {
   onSearch: (query: string, recommendationCount: number) => void;
 }
@@ -91,20 +106,30 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
           }}
         />
       </Box>
-      <FormControl sx={{ minWidth: 200 }}>
-        <InputLabel sx={{ color: 'white' }}>Number of recommendations</InputLabel>
+      <StyledFormControl sx={{ minWidth: 200 }}>
+        <InputLabel 
+          id="recommendation-count-label"
+          sx={{ 
+            position: 'relative',
+            transform: 'none',
+            marginBottom: 1
+          }}
+        >
+          Number of recommendations
+        </InputLabel>
         <StyledSelect
+          labelId="recommendation-count-label"
           value={recommendationCount}
           onChange={(event) => setRecommendationCount(Number(event.target.value))}
           label="Number of recommendations"
         >
-          <MenuItem value={2}>2 Recommendations</MenuItem>
-          <MenuItem value={3}>3 Recommendations</MenuItem>
-          <MenuItem value={4}>4 Recommendations</MenuItem>
-          <MenuItem value={5}>5 Recommendations</MenuItem>
-          <MenuItem value={10}>10 Recommendations</MenuItem>
+          <MenuItem value={2}>2 recommendations</MenuItem>
+          <MenuItem value={3}>3 recommendations</MenuItem>
+          <MenuItem value={4}>4 recommendations</MenuItem>
+          <MenuItem value={5}>5 recommendations</MenuItem>
+          <MenuItem value={10}>10 recommendations</MenuItem>
         </StyledSelect>
-      </FormControl>
+      </StyledFormControl>
     </Box>
   );
 };
