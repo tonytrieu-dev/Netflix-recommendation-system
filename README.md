@@ -1,6 +1,6 @@
 # Netflix Recommendation System
 
-A full-stack app that provides personalized Netflix recommendations using a hybrid-based filtering system.
+A full-stack app that provides personalized Netflix recommendations using a simple hybrid-based filtering system.
 
 ## Features
 
