@@ -3,7 +3,7 @@ import { TextField, InputAdornment, IconButton, Box, Select, MenuItem, FormContr
 import SearchIcon from '@mui/icons-material/Search';
 import { styled } from '@mui/material/styles';
 
-const StyledTextField = styled(TextField)(({ theme }) => ({
+const StyledTextField = styled(TextField)(() => ({
   '& .MuiInputBase-root': {
     color: 'white',
     backgroundColor: '#333',
@@ -26,7 +26,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
-const StyledSelect = styled(Select)(({ theme }) => ({
+const StyledSelect = styled(Select)(() => ({
   '& .MuiSelect-select': {
     color: 'white',
     backgroundColor: '#333',

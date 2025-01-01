@@ -3,7 +3,7 @@ import { Card, CardContent, Typography, Modal, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { MovieRecommendation } from '../../services/api';
 
-const StyledCard = styled(Card)(({ theme }) => ({
+const StyledCard = styled(Card)(() => ({
   backgroundColor: '#181818',
   color: 'white',
   transition: 'transform 0.2s ease-in-out',

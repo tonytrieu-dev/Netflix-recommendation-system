@@ -4,7 +4,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import SearchBar from './components/SearchBar/SearchBar';
 import RecommendationList from './components/RecommendationList/RecommendationList';
-import { getRecommendations } from './services/api';
+import { getRecommendations, MovieRecommendation } from './services/api';
 
 const darkTheme = createTheme({
   palette: {
@@ -31,7 +31,7 @@ const darkTheme = createTheme({
 });
 
 function App() {
-  const [recommendations, setRecommendations] = useState<string[]>([]);
+  const [recommendations, setRecommendations] = useState<MovieRecommendation[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
