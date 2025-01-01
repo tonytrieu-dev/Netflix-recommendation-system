@@ -21,7 +21,7 @@ const StyledTextField = styled(TextField)(() => ({
       borderColor: 'transparent',
     },
     '&.Mui-focused fieldset': {
-      borderColor: '#e50914',
+      borderColor: '#0096FF',
     },
   },
   '& .MuiInputBase-input': {

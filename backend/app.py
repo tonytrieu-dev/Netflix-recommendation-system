@@ -26,12 +26,28 @@ def get_recommendations():
     number_of_recommendations = data.get('count', 5)
     
     try:
-        # First check if the title exists in our dataset
-        if title not in data_manager.data['title'].values:
-            return jsonify({'error': f'Title "{title}" not found in our database'}), 404
-            
+        # Preprocess the title for flexible matching
+        def preprocess_title(t):
+            # Convert to lowercase and remove punctuation
+            import re
+            return re.sub(r'[^\w\s]', '', t).lower()
+        
+        # Normalize the input title
+        normalized_input = preprocess_title(title)
+        
+        # Find matching titles (case and punctuation insensitive)
+        matching_titles = data_manager.data[
+            data_manager.data['title'].apply(preprocess_title).str.contains(normalized_input)
+        ]
+        
+        if matching_titles.empty:
+            return jsonify({'error': f'No titles found matching "{title}"'}), 404
+        
+        # Use the first matching title for recommendations
+        matched_title = matching_titles['title'].iloc[0]
+        
         # Get recommendations with descriptions
-        similar_content = recommender.find_similar_content(title, number_of_recommendations)
+        similar_content = recommender.find_similar_content(matched_title, number_of_recommendations)
         recommendations = []
         
         for title, similarity in similar_content:
