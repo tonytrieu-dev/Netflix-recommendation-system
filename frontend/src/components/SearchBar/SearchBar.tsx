@@ -90,7 +90,7 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%', mt: 10 }}>
       <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', width: '100%' }}>
         <Box sx={{ flex: 2 }}>
           <StyledTextField
