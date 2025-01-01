@@ -22,15 +22,20 @@ class ContentRecommender:
         Returns:
             List of (title, similarity_score) tuples
         """
-        # Create case-insensitive mapping of titles
-        title_mapping = {t.lower(): t for t in self.data_manager.data['title'].values}
+        def normalize_title(t):
+            # Convert to lowercase and remove punctuation
+            return ''.join(c.lower() for c in t if c.isalnum() or c.isspace()).strip()
         
-        # Check if title exists (case-insensitive)
-        if title.lower() not in title_mapping:
+        # Create case-insensitive and punctuation-insensitive mapping of titles
+        title_mapping = {normalize_title(t): t for t in self.data_manager.data['title'].values}
+        
+        # Check if title exists (case-insensitive and punctuation-insensitive)
+        normalized_search = normalize_title(title)
+        if normalized_search not in title_mapping:
             raise ValueError(f"Title '{title}' not found in dataset")
 
-        # Get the correctly cased title
-        correct_title = title_mapping[title.lower()]
+        # Get the correctly formatted title
+        correct_title = title_mapping[normalized_search]
         
         # Get the reference movie data
         title_mask = self.data_manager.data['title'] == correct_title

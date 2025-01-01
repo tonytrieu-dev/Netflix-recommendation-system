@@ -27,19 +27,28 @@ def get_recommendations():
     number_of_recommendations = data.get('count', 5)
     
     try:
-        # Get all titles and create a case-insensitive mapping
+        # Get all titles and create a case-insensitive and punctuation-insensitive mapping
         all_titles = data_manager.data['title'].tolist()
-        title_mapping = {t.lower(): t for t in all_titles}
         
-        # Check if the lowercase version of the title exists
-        if title.lower() not in title_mapping:
+        def normalize_title(t):
+            # Convert to lowercase and remove punctuation
+            return ''.join(c.lower() for c in t if c.isalnum() or c.isspace()).strip()
+        
+        # Create mapping from normalized titles to original titles
+        title_mapping = {normalize_title(t): t for t in all_titles}
+        
+        # Normalize the search title
+        normalized_search = normalize_title(title)
+        
+        # Check if the normalized version of the title exists
+        if normalized_search not in title_mapping:
             return jsonify({
                 'error': f'Title "{title}" not found in our database. Please check the title and try again.',
                 'available_titles': all_titles[:10]  # Show first 10 titles as suggestions
             }), 404
             
-        # Get the correctly cased title from our mapping
-        correct_title = title_mapping[title.lower()]
+        # Get the correctly formatted title from our mapping
+        correct_title = title_mapping[normalized_search]
             
         # Get recommendations with descriptions
         similar_content = recommender.find_similar_content(correct_title, number_of_recommendations)
