@@ -41,7 +41,10 @@ def get_recommendations():
         ]
         
         if matching_titles.empty:
-            return jsonify({'error': f'No titles found matching "{title}"'}), 404
+            return jsonify({
+                'error': f'No titles found matching "{title}". Please check the title and try again.',
+                'available_titles': list(data_manager.data['title'].unique()[:10])  # Provide first 10 titles as suggestion
+            }), 404
         
         # Use the first matching title for recommendations
         matched_title = matching_titles['title'].iloc[0]
@@ -51,12 +54,13 @@ def get_recommendations():
         recommendations = []
         
         for title, similarity in similar_content:
-            description = data_manager.data[data_manager.data['title'] == title]['description'].iloc[0]
-            recommendations.append({
-                'title': title,
-                'description': description,
-                'similarity': similarity
-            })
+            if title in data_manager.data['title'].values:
+                description = data_manager.data[data_manager.data['title'] == title]['description'].iloc[0]
+                recommendations.append({
+                    'title': title,
+                    'description': description,
+                    'similarity': similarity
+                })
             
         return jsonify({'recommendations': recommendations})
         

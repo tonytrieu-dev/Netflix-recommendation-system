@@ -16,6 +16,15 @@ class DataManager:
             self.data = pd.read_csv(self.shows_path)
         else:
             raise ValueError("Invalid content type. Use 'movies' or 'shows'.")
+        
+        # Ensure we have a consistent title column
+        if 'title' not in self.data.columns:
+            if 'name' in self.data.columns:
+                self.data = self.data.rename(columns={'name': 'title'})
+            elif 'show_title' in self.data.columns:
+                self.data = self.data.rename(columns={'show_title': 'title'})
+            else:
+                raise ValueError("No title column found in the dataset")
 
     def get_content_features(self, title: str) -> Dict[str, Any]:
         """Get features for a specific title."""
