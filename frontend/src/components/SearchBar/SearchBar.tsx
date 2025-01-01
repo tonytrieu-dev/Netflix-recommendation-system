@@ -87,51 +87,54 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-      <Box sx={{ flex: 1 }}>
-        <StyledTextField
-          fullWidth
-          placeholder="Enter a movie or TV show title..."
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          onKeyPress={handleKeyPress}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={handleSearch} sx={{ color: 'white' }}>
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%' }}>
+      <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', width: '100%' }}>
+        <Box sx={{ flex: 1 }}>
+          <StyledTextField
+            fullWidth
+            placeholder="Enter a movie or TV show title..."
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            onKeyPress={handleKeyPress}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleSearch} sx={{ color: 'white' }}>
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
+        <Box sx={{ position: 'relative', flex: 1 }}>
+          <InputLabel 
+            id="recommendation-count-label"
+            sx={{ 
+              position: 'absolute',
+              top: '-32px',
+              left: 0,
+              color: 'rgba(255, 255, 255, 0.7)',
+              fontSize: '0.85rem'
+            }}
+          >
+            Number of recommendations
+          </InputLabel>
+          <StyledFormControl fullWidth>
+            <StyledSelect
+              labelId="recommendation-count-label"
+              value={recommendationCount}
+              onChange={(event) => setRecommendationCount(Number(event.target.value))}
+            >
+              <MenuItem value={2}>2 recommendations</MenuItem>
+              <MenuItem value={3}>3 recommendations</MenuItem>
+              <MenuItem value={4}>4 recommendations</MenuItem>
+              <MenuItem value={5}>5 recommendations</MenuItem>
+              <MenuItem value={10}>10 recommendations</MenuItem>
+            </StyledSelect>
+          </StyledFormControl>
+        </Box>
       </Box>
-      <StyledFormControl sx={{ minWidth: 200 }}>
-        <InputLabel 
-          id="recommendation-count-label"
-          sx={{ 
-            position: 'absolute',
-            top: '-24px',
-            left: 0,
-            color: 'rgba(255, 255, 255, 0.7)',
-            fontSize: '0.85rem'
-          }}
-        >
-          Number of recommendations
-        </InputLabel>
-        <StyledSelect
-          labelId="recommendation-count-label"
-          value={recommendationCount}
-          onChange={(event) => setRecommendationCount(Number(event.target.value))}
-          label="Number of recommendations"
-        >
-          <MenuItem value={2}>2 recommendations</MenuItem>
-          <MenuItem value={3}>3 recommendations</MenuItem>
-          <MenuItem value={4}>4 recommendations</MenuItem>
-          <MenuItem value={5}>5 recommendations</MenuItem>
-          <MenuItem value={10}>10 recommendations</MenuItem>
-        </StyledSelect>
-      </StyledFormControl>
     </Box>
   );
 };
