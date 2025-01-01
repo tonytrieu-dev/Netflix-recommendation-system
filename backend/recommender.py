@@ -1,6 +1,7 @@
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from data_manager import DataManager
 from similarity import SimilarityCalculator
+import pandas as pd
 
 class ContentRecommender:
     def __init__(self, data_manager: DataManager, similarity_calculator: SimilarityCalculator):
@@ -30,25 +31,43 @@ class UserBasedRecommender:
         self.data_manager = data_manager
         self.similarity_calculator = similarity_calculator
 
-    def recommend_from_ratings(self, user_ratings: Dict[str, float], count: int) -> List[tuple]:
-        if not user_ratings:
-            return []
+    def recommend_from_ratings(self, user_ratings: Dict[str, float], count: int) -> List[Tuple[str, float]]:
+        """
+        Recommend content based on user ratings.
+        
+        Args:
+            user_ratings: Dictionary mapping title to rating
+            count: Number of recommendations to return
             
+        Returns:
+            List of (title, score) tuples
+        """
         recommendations = []
-        for _, content in self.data_manager.data.iterrows():
-            title = content['title']
-            if title in user_ratings:
+        rated_titles = set(user_ratings.keys())
+        
+        # For each rated title, find similar content
+        for title, rating in user_ratings.items():
+            if title not in self.data_manager.data['title'].values:
                 continue
                 
-            total_score = self.calculate_rating_score(content, user_ratings)
-            recommendations.append((title, total_score))
+            title_idx = self.data_manager.data[self.data_manager.data['title'] == title].index[0]
+            similar_items = self.similarity_calculator.get_similar_items(title_idx)
             
-        return sorted(recommendations, key=lambda x: x[1], reverse=True)[:count]
-
-    def calculate_rating_score(self, content: pd.Series, user_ratings: Dict[str, float]) -> float:
-        total_score = 0
-        for rated_title, rating in user_ratings.items():
-            rated_description = self.data_manager.data[self.data_manager.data['title'] == rated_title]['description'].iloc[0]
-            similarity = self.similarity_calculator.calculate_text_similarity(rated_description, content['description'])
-            total_score += similarity * (rating / 10.0)
-        return total_score
+            # Weight similar items by user rating
+            for similar_title, similarity in similar_items:
+                if similar_title not in rated_titles:
+                    weighted_score = similarity * rating
+                    recommendations.append((similar_title, weighted_score))
+        
+        # Aggregate scores for same titles and sort
+        title_scores = {}
+        for title, score in recommendations:
+            title_scores[title] = title_scores.get(title, 0) + score
+            
+        sorted_recommendations = sorted(
+            title_scores.items(), 
+            key=lambda x: x[1], 
+            reverse=True
+        )
+        
+        return sorted_recommendations[:count]

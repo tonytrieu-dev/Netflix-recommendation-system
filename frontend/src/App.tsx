@@ -33,19 +33,23 @@ const darkTheme = createTheme({
 function App() {
   const [recommendations, setRecommendations] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSearch = async (query: string) => {
+  const handleSearch = async (query: string, recommendationCount: number) => {
     setError(null);
-    setLoading(true);
+    setIsLoading(true);
     try {
-      const data = await getRecommendations(query);
+      const data = await getRecommendations(query, recommendationCount);
       setRecommendations(data.recommendations);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unexpected error occurred');
+      }
       setRecommendations([]);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -67,7 +71,7 @@ function App() {
             Netflix Recommendation System
           </Typography>
 
-          <Box sx={{ maxWidth: 600, mx: 'auto', mb: 4 }}>
+          <Box sx={{ maxWidth: 800, mx: 'auto', mb: 4 }}>
             <SearchBar onSearch={handleSearch} />
           </Box>
 
@@ -77,7 +81,7 @@ function App() {
             </Alert>
           )}
 
-          {loading ? (
+          {isLoading ? (
             <Box
               sx={{
                 display: 'flex',

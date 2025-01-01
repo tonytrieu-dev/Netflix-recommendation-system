@@ -1,5 +1,5 @@
 import { useState, KeyboardEvent } from 'react';
-import { TextField, InputAdornment, IconButton } from '@mui/material';
+import { TextField, InputAdornment, IconButton, Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled } from '@mui/material/styles';
 
@@ -26,16 +26,39 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
+const StyledSelect = styled(Select)(({ theme }) => ({
+  '& .MuiSelect-select': {
+    color: 'white',
+    backgroundColor: '#333',
+    '&:hover': {
+      backgroundColor: '#404040',
+    },
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: 'transparent',
+  },
+  '&:hover .MuiOutlinedInput-notchedOutline': {
+    borderColor: 'transparent',
+  },
+  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+    borderColor: '#e50914',
+  },
+  '& .MuiSelect-icon': {
+    color: 'white',
+  },
+}));
+
 interface SearchBarProps {
-  onSearch: (query: string) => void;
+  onSearch: (query: string, recommendationCount: number) => void;
 }
 
 const SearchBar = ({ onSearch }: SearchBarProps) => {
   const [query, setQuery] = useState('');
+  const [recommendationCount, setRecommendationCount] = useState(5);
 
   const handleSearch = () => {
     if (query.trim()) {
-      onSearch(query.trim());
+      onSearch(query.trim(), recommendationCount);
     }
   };
 
@@ -46,22 +69,39 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
   };
 
   return (
-    <StyledTextField
-      fullWidth
-      placeholder="Enter a movie or TV show title..."
-      value={query}
-      onChange={(e) => setQuery(e.target.value)}
-      onKeyPress={handleKeyPress}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <IconButton onClick={handleSearch} sx={{ color: 'white' }}>
-              <SearchIcon />
-            </IconButton>
-          </InputAdornment>
-        ),
-      }}
-    />
+    <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+      <Box sx={{ flex: 1 }}>
+        <StyledTextField
+          fullWidth
+          placeholder="Enter a movie or TV show title..."
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          onKeyPress={handleKeyPress}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={handleSearch} sx={{ color: 'white' }}>
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
+      <FormControl sx={{ minWidth: 200 }}>
+        <InputLabel sx={{ color: 'white' }}>Number of Recommendations</InputLabel>
+        <StyledSelect
+          value={recommendationCount}
+          onChange={(event) => setRecommendationCount(Number(event.target.value))}
+          label="Number of Recommendations"
+        >
+          <MenuItem value={5}>5 Recommendations</MenuItem>
+          <MenuItem value={10}>10 Recommendations</MenuItem>
+          <MenuItem value={15}>15 Recommendations</MenuItem>
+          <MenuItem value={20}>20 Recommendations</MenuItem>
+        </StyledSelect>
+      </FormControl>
+    </Box>
   );
 };
 
