@@ -4,6 +4,7 @@ from recommender import ContentRecommender
 from data_manager import DataManager
 from similarity import SimilarityCalculator
 import os
+import re
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -26,41 +27,32 @@ def get_recommendations():
     number_of_recommendations = data.get('count', 5)
     
     try:
-        # Preprocess the title for flexible matching
-        def preprocess_title(t):
-            # Convert to lowercase and remove punctuation
-            import re
-            return re.sub(r'[^\w\s]', '', t).lower()
-        
-        # Normalize the input title
-        normalized_input = preprocess_title(title)
-        
-        # Find matching titles (case and punctuation insensitive)
-        matching_titles = data_manager.data[
-            data_manager.data['title'].apply(preprocess_title).str.contains(normalized_input)
-        ]
-        
-        if matching_titles.empty:
+        # Check if title exists in dataset (exact match only)
+        all_titles = data_manager.data['title'].tolist()
+        if title not in all_titles:
             return jsonify({
-                'error': f'No titles found matching "{title}". Please check the title and try again.',
-                'available_titles': list(data_manager.data['title'].unique()[:10])  # Provide first 10 titles as suggestion
+                'error': f'Title "{title}" not found in our database. Please check the title and try again.',
+                'available_titles': all_titles[:10]  # Show first 10 titles as suggestions
             }), 404
-        
-        # Use the first matching title for recommendations
-        matched_title = matching_titles['title'].iloc[0]
-        
+            
         # Get recommendations with descriptions
-        similar_content = recommender.find_similar_content(matched_title, number_of_recommendations)
+        similar_content = recommender.find_similar_content(title, number_of_recommendations)
         recommendations = []
         
-        for title, similarity in similar_content:
-            if title in data_manager.data['title'].values:
-                description = data_manager.data[data_manager.data['title'] == title]['description'].iloc[0]
+        for rec_title, similarity in similar_content:
+            if rec_title in all_titles:  # Only include titles that exist in our dataset
+                description = data_manager.data[data_manager.data['title'] == rec_title]['description'].iloc[0]
                 recommendations.append({
-                    'title': title,
+                    'title': rec_title,
                     'description': description,
                     'similarity': similarity
                 })
+        
+        if not recommendations:
+            return jsonify({
+                'error': 'No recommendations found for this title.',
+                'available_titles': all_titles[:10]
+            }), 404
             
         return jsonify({'recommendations': recommendations})
         

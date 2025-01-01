@@ -22,12 +22,16 @@ class ContentRecommender:
         Returns:
             List of (title, similarity_score) tuples
         """
-        if title not in self.data_manager.data['title'].values:
+        # Strict title check using exact match
+        if title not in set(self.data_manager.data['title'].values):
             raise ValueError(f"Title '{title}' not found in dataset")
 
         # Get the reference movie data
-        reference_movie = self.data_manager.data[
-            self.data_manager.data['title'] == title].iloc[0].to_dict()
+        title_mask = self.data_manager.data['title'] == title
+        if not title_mask.any():
+            raise ValueError(f"Title '{title}' not found in dataset")
+        
+        reference_movie = self.data_manager.data[title_mask].iloc[0].to_dict()
         
         # Calculate similarity with all other movies
         similarities = []
@@ -40,7 +44,18 @@ class ContentRecommender:
                 similarities.append((content['title'], similarity))
         
         # Sort by similarity and return top N
-        return sorted(similarities, key=lambda x: x[1], reverse=True)[:number_of_recommendations]
+        sorted_similarities = sorted(similarities, key=lambda x: x[1], reverse=True)
+        
+        # Verify all recommended titles exist in the dataset
+        valid_recommendations = [
+            (t, s) for t, s in sorted_similarities[:number_of_recommendations]
+            if t in set(self.data_manager.data['title'].values)
+        ]
+        
+        if not valid_recommendations:
+            raise ValueError("No valid recommendations found")
+        
+        return valid_recommendations
 
 
 class UserBasedRecommender:

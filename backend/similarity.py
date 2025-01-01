@@ -1,8 +1,4 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
 from typing import List, Tuple, Set, Dict
-import re
 
 class SimilarityCalculator:
     @staticmethod
@@ -19,7 +15,7 @@ class SimilarityCalculator:
         
         # Convert to lowercase and remove special characters
         text = text.lower()
-        text = re.sub(r'[^a-z0-9\s]', '', text)
+        text = ''.join(c for c in text if c.isalnum() or c.isspace())
         
         # Split into words and remove common words
         words = set(text.split())
@@ -48,54 +44,25 @@ class SimilarityCalculator:
         """
         # Calculate description similarity
         description_similarity = self.calculate_jaccard_similarity(
-            self.preprocess_text(first_movie['description']),
-            self.preprocess_text(second_movie['description'])
+            self.preprocess_text(first_movie.get('description', '')),
+            self.preprocess_text(second_movie.get('description', ''))
         )
         
         # Calculate genre similarity
         genre_similarity = self.calculate_jaccard_similarity(
-            set(first_movie.get('genre', '').lower().split(',')),
-            set(second_movie.get('genre', '').lower().split(','))
+            self.preprocess_text(first_movie.get('listed_in', '')),
+            self.preprocess_text(second_movie.get('listed_in', ''))
         )
         
-        # Calculate title similarity
+        # Calculate title word similarity
         title_similarity = self.calculate_jaccard_similarity(
-            self.preprocess_text(first_movie['title']),
-            self.preprocess_text(second_movie['title'])
+            self.preprocess_text(first_movie.get('title', '')),
+            self.preprocess_text(second_movie.get('title', ''))
         )
         
-        # Weighted combination
-        total_similarity = (
-            0.5 * description_similarity +  # Description has highest weight
-            0.3 * genre_similarity +        # Genre matching is important
-            0.2 * title_similarity          # Title words might indicate similarity
+        # Weighted average of similarities
+        return (
+            0.5 * description_similarity +
+            0.3 * genre_similarity +
+            0.2 * title_similarity
         )
-        
-        return total_similarity
-
-    def __init__(self):
-        self.vectorizer = TfidfVectorizer(stop_words='english')
-        self.tfidf_matrix = None
-        self.titles = None
-
-    def fit(self, descriptions: List[str], titles: List[str]) -> None:
-        """Fit the vectorizer and create TF-IDF matrix."""
-        self.tfidf_matrix = self.vectorizer.fit_transform(descriptions)
-        self.titles = titles
-
-    def get_similar_items(self, title_idx: int, n: int = 5) -> List[Tuple[str, float]]:
-        """Get n most similar items to the given title index."""
-        if self.tfidf_matrix is None or self.titles is None:
-            raise ValueError("Calculator not fitted. Call fit() first.")
-
-        # Calculate similarity scores
-        sim_scores = cosine_similarity(
-            self.tfidf_matrix[title_idx:title_idx+1], 
-            self.tfidf_matrix
-        ).flatten()
-
-        # Get indices of top similar items (excluding self)
-        similar_indices = sim_scores.argsort()[::-1][1:n+1]
-
-        # Return titles and scores
-        return [(self.titles[idx], sim_scores[idx]) for idx in similar_indices]
