@@ -11,12 +11,12 @@ CORS(app)  # Enable CORS for all routes
 
 # Define paths to data files
 current_dir = os.path.dirname(os.path.abspath(__file__))
-movies_path = os.path.join(current_dir, 'movies.csv')
-shows_path = os.path.join(current_dir, 'tv_shows.csv')
+movies_path = os.path.join(current_dir, '../data/netflix_movies.csv')
+shows_path = os.path.join(current_dir, '../data/netflix_shows.csv')
 
 # Initialize components
 data_manager = DataManager(movies_path=movies_path, shows_path=shows_path)
-data_manager.load_content('movies')  # This loads movies into data_manager.data
+data_manager.load_content('all')  # Load both movies and shows
 similarity_calculator = SimilarityCalculator()
 recommender = ContentRecommender(data_manager, similarity_calculator)
 
