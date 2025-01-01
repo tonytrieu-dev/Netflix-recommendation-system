@@ -4,6 +4,31 @@ import numpy as np
 from typing import List, Tuple
 
 class SimilarityCalculator:
+    @staticmethod
+    def calculate_jaccard_similarity(first_description: str, second_description: str) -> float:
+        """
+        Calculate Jaccard similarity between two text descriptions.
+        
+        Args:
+            first_description: First text description
+            second_description: Second text description
+            
+        Returns:
+            Jaccard similarity score between 0 and 1
+        """
+        # Convert descriptions to sets of words
+        first_words = set(first_description.lower().split())
+        second_words = set(second_description.lower().split())
+        
+        # Calculate intersection and union
+        intersection = len(first_words.intersection(second_words))
+        union = len(first_words.union(second_words))
+        
+        # Return Jaccard similarity
+        if union == 0:
+            return 0.0
+        return intersection / union
+
     def __init__(self):
         self.vectorizer = TfidfVectorizer(stop_words='english')
         self.tfidf_matrix = None

@@ -1,73 +1,85 @@
 from typing import List, Tuple, Dict
 from data_manager import DataManager
 from similarity import SimilarityCalculator
-import pandas as pd
 
 class ContentRecommender:
     def __init__(self, data_manager: DataManager, similarity_calculator: SimilarityCalculator):
+        """Initialize the content recommender with data manager and similarity calculator."""
         self.data_manager = data_manager
         self.similarity_calculator = similarity_calculator
-        self._fit_similarity_calculator()
 
-    def _fit_similarity_calculator(self) -> None:
-        """Prepare the similarity calculator with the current dataset."""
-        if self.data_manager.data is None:
-            raise ValueError("No data loaded in DataManager")
+    def find_similar_content(self, title: str, number_of_recommendations: int = 5) -> List[Tuple[str, float]]:
+        """
+        Find similar content based on description similarity.
         
-        descriptions = self.data_manager.data['description'].fillna('').tolist()
-        titles = self.data_manager.data['title'].tolist()
-        self.similarity_calculator.fit(descriptions, titles)
-
-    def find_similar_content(self, title: str, n: int = 5) -> List[Tuple[str, float]]:
-        """Find n most similar titles to the given title."""
+        Args:
+            title: Title to find recommendations for
+            number_of_recommendations: Number of recommendations to return
+            
+        Returns:
+            List of (title, similarity_score) tuples
+        """
         if title not in self.data_manager.data['title'].values:
             raise ValueError(f"Title '{title}' not found in dataset")
 
-        title_idx = self.data_manager.data[self.data_manager.data['title'] == title].index[0]
-        return self.similarity_calculator.get_similar_items(title_idx, n)
+        # Get the description of the input title
+        reference_description = self.data_manager.data[
+            self.data_manager.data['title'] == title]['description'].iloc[0]
+        
+        # Calculate similarity with all other titles
+        similarities = []
+        for _, content in self.data_manager.data.iterrows():
+            if content['title'] != title:
+                similarity = self.similarity_calculator.calculate_jaccard_similarity(
+                    reference_description,
+                    content['description']
+                )
+                similarities.append((content['title'], similarity))
+        
+        # Sort by similarity and return top N
+        return sorted(similarities, key=lambda x: x[1], reverse=True)[:number_of_recommendations]
+
 
 class UserBasedRecommender:
     def __init__(self, data_manager: DataManager, similarity_calculator: SimilarityCalculator):
+        """Initialize the user-based recommender."""
         self.data_manager = data_manager
         self.similarity_calculator = similarity_calculator
 
-    def recommend_from_ratings(self, user_ratings: Dict[str, float], count: int) -> List[Tuple[str, float]]:
+    def recommend_from_ratings(self, user_ratings: Dict[str, float], number_of_recommendations: int) -> List[Tuple[str, float]]:
         """
         Recommend content based on user ratings.
         
         Args:
-            user_ratings: Dictionary mapping title to rating
-            count: Number of recommendations to return
+            user_ratings: Dictionary mapping title to rating (1-5)
+            number_of_recommendations: Number of recommendations to return
             
         Returns:
             List of (title, score) tuples
         """
+        if not user_ratings:
+            return []
+            
         recommendations = []
-        rated_titles = set(user_ratings.keys())
         
-        # For each rated title, find similar content
-        for title, rating in user_ratings.items():
-            if title not in self.data_manager.data['title'].values:
+        # For each unrated title, calculate a weighted similarity score
+        for _, content in self.data_manager.data.iterrows():
+            title = content['title']
+            if title in user_ratings:
                 continue
                 
-            title_idx = self.data_manager.data[self.data_manager.data['title'] == title].index[0]
-            similar_items = self.similarity_calculator.get_similar_items(title_idx)
+            total_score = 0.0
+            for rated_title, rating in user_ratings.items():
+                rated_description = self.data_manager.data[
+                    self.data_manager.data['title'] == rated_title]['description'].iloc[0]
+                
+                similarity = self.similarity_calculator.calculate_jaccard_similarity(
+                    rated_description,
+                    content['description']
+                )
+                total_score += similarity * (rating / 5.0)  # Normalize rating to 0-1 range
             
-            # Weight similar items by user rating
-            for similar_title, similarity in similar_items:
-                if similar_title not in rated_titles:
-                    weighted_score = similarity * rating
-                    recommendations.append((similar_title, weighted_score))
+            recommendations.append((title, total_score))
         
-        # Aggregate scores for same titles and sort
-        title_scores = {}
-        for title, score in recommendations:
-            title_scores[title] = title_scores.get(title, 0) + score
-            
-        sorted_recommendations = sorted(
-            title_scores.items(), 
-            key=lambda x: x[1], 
-            reverse=True
-        )
-        
-        return sorted_recommendations[:count]
+        # Sort by score and return top N
+        return sorted(recommendations, key=lambda x: x[1], reverse=True)[:number_of_recommendations]
