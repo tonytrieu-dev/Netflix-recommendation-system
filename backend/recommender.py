@@ -10,7 +10,10 @@ class ContentRecommender:
 
     def find_similar_content(self, title: str, number_of_recommendations: int = 5) -> List[Tuple[str, float]]:
         """
-        Find similar content based on description similarity.
+        Find similar content based on multiple features:
+        - Description similarity
+        - Genre similarity
+        - Title word similarity
         
         Args:
             title: Title to find recommendations for
@@ -22,17 +25,17 @@ class ContentRecommender:
         if title not in self.data_manager.data['title'].values:
             raise ValueError(f"Title '{title}' not found in dataset")
 
-        # Get the description of the input title
-        reference_description = self.data_manager.data[
-            self.data_manager.data['title'] == title]['description'].iloc[0]
+        # Get the reference movie data
+        reference_movie = self.data_manager.data[
+            self.data_manager.data['title'] == title].iloc[0].to_dict()
         
-        # Calculate similarity with all other titles
+        # Calculate similarity with all other movies
         similarities = []
         for _, content in self.data_manager.data.iterrows():
             if content['title'] != title:
-                similarity = self.similarity_calculator.calculate_jaccard_similarity(
-                    reference_description,
-                    content['description']
+                similarity = self.similarity_calculator.calculate_content_similarity(
+                    reference_movie,
+                    content.to_dict()
                 )
                 similarities.append((content['title'], similarity))
         
@@ -62,7 +65,7 @@ class UserBasedRecommender:
             
         recommendations = []
         
-        # For each unrated title, calculate a weighted similarity score
+        # For each unrated movie, calculate a weighted similarity score
         for _, content in self.data_manager.data.iterrows():
             title = content['title']
             if title in user_ratings:
@@ -70,12 +73,12 @@ class UserBasedRecommender:
                 
             total_score = 0.0
             for rated_title, rating in user_ratings.items():
-                rated_description = self.data_manager.data[
-                    self.data_manager.data['title'] == rated_title]['description'].iloc[0]
+                rated_movie = self.data_manager.data[
+                    self.data_manager.data['title'] == rated_title].iloc[0].to_dict()
                 
-                similarity = self.similarity_calculator.calculate_jaccard_similarity(
-                    rated_description,
-                    content['description']
+                similarity = self.similarity_calculator.calculate_content_similarity(
+                    rated_movie,
+                    content.to_dict()
                 )
                 total_score += similarity * (rating / 5.0)  # Normalize rating to 0-1 range
             

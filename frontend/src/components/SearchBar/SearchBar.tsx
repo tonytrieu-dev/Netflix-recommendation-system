@@ -30,9 +30,6 @@ const StyledSelect = styled(Select)(({ theme }) => ({
   '& .MuiSelect-select': {
     color: 'white',
     backgroundColor: '#333',
-    '&:hover': {
-      backgroundColor: '#404040',
-    },
   },
   '& .MuiOutlinedInput-notchedOutline': {
     borderColor: 'transparent',
@@ -41,11 +38,17 @@ const StyledSelect = styled(Select)(({ theme }) => ({
     borderColor: 'transparent',
   },
   '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-    borderColor: '#e50914',
+    borderColor: '#b20710',
   },
   '& .MuiSelect-icon': {
     color: 'white',
   },
+  '& .MuiMenu-paper': {
+    backgroundColor: '#141414',
+  },
+  '& .MuiMenuItem-root:hover': {
+    backgroundColor: '#b20710',
+  }
 }));
 
 interface SearchBarProps {
