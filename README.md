@@ -2,6 +2,10 @@
 
 A full-stack app that provides personalized Netflix recommendations using a simple hybrid-based filtering system.
 
+## Disclaimer
+
+My recommendation system doesn't have every single Netflix title because I don't have access to the official Netflix dataset, so I had to resort to using a Netflix dataset from Kaggle.
+
 ## Features
 
 - Hybrid recommendation system that uses content-based filtering and collaborative filtering
