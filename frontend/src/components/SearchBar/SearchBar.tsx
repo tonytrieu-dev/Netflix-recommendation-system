@@ -8,6 +8,7 @@ const StyledTextField = styled(TextField)(() => ({
     color: 'white',
     backgroundColor: '#333',
     borderRadius: '4px',
+    height: '56px',
     '&:hover': {
       backgroundColor: '#404040',
     },
@@ -22,14 +23,16 @@ const StyledTextField = styled(TextField)(() => ({
     },
   },
   '& .MuiInputBase-input': {
-    padding: '12px 14px',
+    padding: '16px 14px',
   },
 }));
 
 const StyledSelect = styled(Select)(() => ({
+  height: '56px',
   '& .MuiSelect-select': {
     color: 'white',
     backgroundColor: '#333',
+    padding: '16px 14px',
   },
   '& .MuiOutlinedInput-notchedOutline': {
     borderColor: 'transparent',
@@ -89,10 +92,10 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%' }}>
       <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', width: '100%' }}>
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 2 }}>
           <StyledTextField
             fullWidth
-            placeholder="Enter a movie or TV show title..."
+            placeholder="Enter a movie or TV show title"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             onKeyPress={handleKeyPress}
