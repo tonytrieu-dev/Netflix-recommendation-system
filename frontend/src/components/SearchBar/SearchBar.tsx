@@ -115,7 +115,7 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
             id="recommendation-count-label"
             sx={{ 
               position: 'absolute',
-              top: '-32px',
+              top: '-30px',
               left: 0,
               color: 'rgba(255, 255, 255, 0.7)',
               fontSize: '0.85rem'
