@@ -22,7 +22,7 @@ A full-stack app that provides personalized Netflix recommendations using a simp
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/tonytrieu-dev/Netflix-recommendation-system
    cd Netflix-recommendation-system
    ```
 2. Install backend dependencies:
