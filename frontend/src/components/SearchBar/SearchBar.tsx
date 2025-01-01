@@ -92,16 +92,17 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
         />
       </Box>
       <FormControl sx={{ minWidth: 200 }}>
-        <InputLabel sx={{ color: 'white' }}>Number of Recommendations</InputLabel>
+        <InputLabel sx={{ color: 'white' }}>Number of recommendations</InputLabel>
         <StyledSelect
           value={recommendationCount}
           onChange={(event) => setRecommendationCount(Number(event.target.value))}
-          label="Number of Recommendations"
+          label="Number of recommendations"
         >
+          <MenuItem value={2}>2 Recommendations</MenuItem>
+          <MenuItem value={3}>3 Recommendations</MenuItem>
+          <MenuItem value={4}>4 Recommendations</MenuItem>
           <MenuItem value={5}>5 Recommendations</MenuItem>
           <MenuItem value={10}>10 Recommendations</MenuItem>
-          <MenuItem value={15}>15 Recommendations</MenuItem>
-          <MenuItem value={20}>20 Recommendations</MenuItem>
         </StyledSelect>
       </FormControl>
     </Box>
