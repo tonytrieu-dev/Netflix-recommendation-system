@@ -9,6 +9,8 @@ const StyledTextField = styled(TextField)(() => ({
     backgroundColor: '#333',
     borderRadius: '4px',
     height: '56px',
+    fontSize: '1rem',
+    fontWeight: 400,
     '&:hover': {
       backgroundColor: '#404040',
     },
@@ -29,22 +31,29 @@ const StyledTextField = styled(TextField)(() => ({
 
 const StyledSelect = styled(Select)(() => ({
   height: '56px',
+  fontSize: '1rem',
+  fontWeight: 400,
   '& .MuiSelect-select': {
     color: 'white',
     backgroundColor: '#333',
     padding: '16px 14px',
   },
   '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: 'transparent',
+    border: 'none',
   },
   '&:hover .MuiOutlinedInput-notchedOutline': {
-    borderColor: 'transparent',
+    border: 'none',
   },
   '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-    borderColor: '#b20710',
+    border: 'none',
   },
   '& .MuiSelect-icon': {
     color: 'white',
+  },
+  '&.MuiOutlinedInput-root': {
+    '& fieldset': {
+      border: 'none',
+    },
   },
   '& .MuiMenu-paper': {
     backgroundColor: '#141414',
@@ -118,7 +127,7 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
               top: '-30px',
               left: 0,
               color: 'rgba(255, 255, 255, 0.7)',
-              fontSize: '0.85rem'
+              fontSize: '1rem'
             }}
           >
             Number of recommendations

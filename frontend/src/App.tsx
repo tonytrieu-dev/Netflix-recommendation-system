@@ -19,6 +19,7 @@ const darkTheme = createTheme({
   },
   typography: {
     fontFamily: [
+      'Netflix Sans',
       '-apple-system',
       'BlinkMacSystemFont',
       '"Segoe UI"',
@@ -27,6 +28,42 @@ const darkTheme = createTheme({
       'Arial',
       'sans-serif',
     ].join(','),
+    h3: {
+      fontFamily: [
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Segoe UI"',
+        'Roboto',
+        '"Helvetica Neue"',
+        'Arial',
+        'sans-serif',
+      ].join(','),
+    },
+    body1: {
+      fontSize: '1rem',
+      letterSpacing: '0.00938em',
+    },
+    button: {
+      textTransform: 'none',
+      fontWeight: 500,
+    },
+  },
+  components: {
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'Netflix Sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'Netflix Sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+          fontSize: '1rem',
+        },
+      },
+    },
   },
 });
 
