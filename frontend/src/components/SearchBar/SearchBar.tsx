@@ -87,7 +87,7 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
       <Box sx={{ flex: 1 }}>
         <StyledTextField
           fullWidth
@@ -110,9 +110,11 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
         <InputLabel 
           id="recommendation-count-label"
           sx={{ 
-            position: 'relative',
-            transform: 'none',
-            marginBottom: 1
+            position: 'absolute',
+            top: '-24px',
+            left: 0,
+            color: 'rgba(255, 255, 255, 0.7)',
+            fontSize: '0.85rem'
           }}
         >
           Number of recommendations
