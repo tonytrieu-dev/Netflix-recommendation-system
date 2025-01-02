@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, CardContent, Typography, Modal, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { MovieRecommendation } from '../../services/api';
+import { ContentRecommendation } from '../../services/api';
 
 const StyledCard = styled(Card)(() => ({
   backgroundColor: '#181818',
@@ -28,11 +28,12 @@ const ModalContent = styled(Box)({
   outline: 'none',
 });
 
-interface MovieCardProps {
-  movie: MovieRecommendation;
+interface ContentCardProps {
+  content: ContentRecommendation;
+  contentType: string;
 }
 
-const MovieCard = ({ movie }: MovieCardProps) => {
+const ContentCard = ({ content, contentType }: ContentCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleCardClick = () => {
@@ -43,15 +44,17 @@ const MovieCard = ({ movie }: MovieCardProps) => {
     setIsModalOpen(false);
   };
 
+  const contentTypeLabel = contentType === 'movies' ? 'Movie' : 'TV Show';
+
   return (
     <>
       <StyledCard onClick={handleCardClick}>
         <CardContent>
-          <Typography variant="h6" component="div" noWrap>
-            {movie.title}
+          <Typography variant="h6" component="div" noWrap sx={{ fontWeight: 700 }}>
+            {content.title}
           </Typography>
           <Typography variant="body2" color="rgba(255,255,255,0.7)">
-            Similarity: {(movie.similarity * 100).toFixed(1)}%
+            Similarity: {(content.similarity * 100).toFixed(1)}%
           </Typography>
         </CardContent>
       </StyledCard>
@@ -59,17 +62,20 @@ const MovieCard = ({ movie }: MovieCardProps) => {
       <Modal
         open={isModalOpen}
         onClose={handleCloseModal}
-        aria-labelledby="movie-modal-title"
+        aria-labelledby="content-modal-title"
       >
         <ModalContent>
-          <Typography id="movie-modal-title" variant="h5" component="h2" gutterBottom>
-            {movie.title}
+          <Typography id="content-modal-title" variant="h5" component="h2" gutterBottom sx={{ fontWeight: 700 }}>
+            {content.title}
+            <Typography component="span" variant="subtitle1" sx={{ ml: 1, color: 'rgba(255,255,255,0.7)' }}>
+              ({contentTypeLabel})
+            </Typography>
           </Typography>
           <Typography variant="body1" sx={{ mt: 2 }}>
-            {movie.description}
+            {content.description}
           </Typography>
           <Typography variant="body2" sx={{ mt: 2, color: 'rgba(255,255,255,0.7)' }}>
-            Similarity Score: {(movie.similarity * 100).toFixed(1)}%
+            Similarity Score: {(content.similarity * 100).toFixed(1)}%
           </Typography>
         </ModalContent>
       </Modal>
@@ -77,4 +83,4 @@ const MovieCard = ({ movie }: MovieCardProps) => {
   );
 };
 
-export default MovieCard;
+export default ContentCard;

@@ -1,0 +1,41 @@
+.recommendation-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.search-container {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: flex-start;
+}
+
+.content-type-select {
+  min-width: 150px;
+}
+
+.search-input {
+  flex-grow: 1;
+}
+
+.search-button {
+  height: 56px;  /* Match height with TextField */
+}
+
+.recommendations-list {
+  margin-top: 24px;
+}
+
+.recommendation-card {
+  margin-bottom: 16px;
+  transition: transform 0.2s;
+  font-weight: 700; /* Make recommendations bold */
+  letter-spacing: 0.5px; /* Add slight letter spacing for better readability */
+}
+
+.recommendation-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0.9; /* Slight fade effect on hover */
+}

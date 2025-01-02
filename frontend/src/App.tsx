@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Container, Typography, Box, Alert, CircularProgress } from '@mui/material';
+import { Container, Typography, Alert, Box, CircularProgress } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import SearchBar from './components/SearchBar/SearchBar';
@@ -10,11 +10,11 @@ const darkTheme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#0096FF',
+      main: '#1976d2', 
     },
     background: {
       default: '#141414',
-      paper: '#181818',
+      paper: '#141414',
     },
   },
   typography: {
@@ -71,19 +71,18 @@ function App() {
   const [recommendations, setRecommendations] = useState<MovieRecommendation[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentContentType, setCurrentContentType] = useState('shows');  
 
-  const handleSearch = async (query: string, recommendationCount: number) => {
-    setError(null);
+  const handleSearch = async (title: string, contentType: string, count: number) => {
     setIsLoading(true);
+    setError(null);
+    setCurrentContentType(contentType);  
+    
     try {
-      const data = await getRecommendations(query, recommendationCount);
-      setRecommendations(data.recommendations);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError('An unexpected error occurred');
-      }
+      const results = await getRecommendations(title, contentType, count);
+      setRecommendations(results);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
       setRecommendations([]);
     } finally {
       setIsLoading(false);
@@ -93,46 +92,50 @@ function App() {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" className="app-container">
         <Box sx={{ py: 4 }}>
           <Typography
             variant="h3"
             component="h1"
+            align="center"
+            gutterBottom
             sx={{
-              mb: 4,
               fontWeight: 600,
-              textAlign: 'center',
-              color: 'white',
+              color: '#ffffff',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
             }}
           >
-            Netflix Recommendation System
+            Netflix Content Recommender
           </Typography>
 
-          <Box sx={{ maxWidth: 800, mx: 'auto', mb: 4 }}>
-            <SearchBar onSearch={handleSearch} />
+          <Box sx={{ maxWidth: 800, mx: 'auto', mb: 5 }}>
+            <SearchBar onSearch={handleSearch} isLoading={isLoading} />
           </Box>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 3 }}>
+            <Alert
+              severity="error"
+              sx={{
+                mb: 2,
+                backgroundColor: 'rgba(25, 118, 210, 0.1)', 
+                color: '#64b5f6', 
+              }}
+            >
               {error}
             </Alert>
           )}
 
-          {isLoading ? (
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '200px',
-              }}
-            >
-              <CircularProgress />
+          {isLoading && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+              <CircularProgress sx={{ color: '#1976d2' }} /> 
             </Box>
-          ) : (
-            recommendations.length > 0 && (
-              <RecommendationList recommendations={recommendations} />
-            )
+          )}
+
+          {recommendations.length > 0 && (
+            <RecommendationList 
+              recommendations={recommendations}
+              contentType={currentContentType}  
+            />
           )}
         </Box>
       </Container>

@@ -1,22 +1,20 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from recommender import ContentRecommender
-from data_manager import DataManager
-from similarity import SimilarityCalculator
 import os
-import re
+from data_manager import DataManager
+from recommender import ContentRecommender
+from similarity import SimilarityCalculator
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)
 
 # Define paths to data files
 current_dir = os.path.dirname(os.path.abspath(__file__))
-movies_path = os.path.join(current_dir, '../data/netflix_movies.csv')
-shows_path = os.path.join(current_dir, '../data/netflix_shows.csv')
+movies_path = os.path.join(current_dir, 'movies.csv')
+shows_path = os.path.join(current_dir, 'tv_shows.csv')
 
 # Initialize components
 data_manager = DataManager(movies_path=movies_path, shows_path=shows_path)
-data_manager.load_content('all')  # Load both movies and shows
 similarity_calculator = SimilarityCalculator()
 recommender = ContentRecommender(data_manager, similarity_calculator)
 
@@ -24,9 +22,13 @@ recommender = ContentRecommender(data_manager, similarity_calculator)
 def get_recommendations():
     data = request.get_json()
     title = data.get('title')
+    content_type = data.get('content_type', 'movies')  # Default to movies if not specified
     number_of_recommendations = data.get('count', 5)
     
     try:
+        # Load the appropriate dataset based on content type
+        data_manager.load_content(content_type)
+        
         # Get all titles and create a case-insensitive and punctuation-insensitive mapping
         all_titles = data_manager.data['title'].tolist()
         
@@ -43,7 +45,7 @@ def get_recommendations():
         # Check if the normalized version of the title exists
         if normalized_search not in title_mapping:
             return jsonify({
-                'error': f'Title "{title}" not found in our database. Please check the title and try again.',
+                'error': f'Title "{title}" not found in our {content_type} database. Please check the title and try again.',
                 'available_titles': all_titles[:10]  # Show first 10 titles as suggestions
             }), 404
             
@@ -65,7 +67,7 @@ def get_recommendations():
         
         if not recommendations:
             return jsonify({
-                'error': 'No recommendations found for this title.',
+                'error': f'No recommendations found for this {content_type} title.',
                 'available_titles': all_titles[:10]
             }), 404
             

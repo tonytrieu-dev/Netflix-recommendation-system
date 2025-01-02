@@ -1,10 +1,13 @@
+import React from 'react';
 import { Grid } from '@mui/material';
-import MovieCard from '../MovieCard/MovieCard';
-import { MovieRecommendation } from '../../services/api';
 import { motion } from 'framer-motion';
+import { ContentRecommendation } from '../../services/api';
+import ContentCard from '../ContentCard/ContentCard';
+import './RecommendationList.css';
 
 interface RecommendationListProps {
-  recommendations: MovieRecommendation[];
+  recommendations: ContentRecommendation[];
+  contentType: string;
 }
 
 const container = {
@@ -17,17 +20,18 @@ const container = {
   }
 };
 
-const RecommendationList = ({ recommendations }: RecommendationListProps) => {
+const RecommendationList = ({ recommendations, contentType }: RecommendationListProps) => {
   return (
     <motion.div
       variants={container}
       initial="hidden"
       animate="show"
+      className="recommendation-container"
     >
       <Grid container spacing={3}>
-        {recommendations.map((movie) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={movie.title}>
-            <MovieCard movie={movie} />
+        {recommendations.map((item) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={item.title}>
+            <ContentCard content={item} contentType={contentType} />
           </Grid>
         ))}
       </Grid>

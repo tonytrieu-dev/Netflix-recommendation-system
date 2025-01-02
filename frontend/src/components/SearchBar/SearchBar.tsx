@@ -1,5 +1,5 @@
 import { useState, KeyboardEvent } from 'react';
-import { TextField, InputAdornment, IconButton, Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { TextField, InputAdornment, IconButton, Box, Select, MenuItem, FormControl, InputLabel, CircularProgress, SelectChangeEvent } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled } from '@mui/material/styles';
 
@@ -27,68 +27,65 @@ const StyledTextField = styled(TextField)(() => ({
   '& .MuiInputBase-input': {
     padding: '16px 14px',
   },
+  flex: '1 1 auto', // Allow the text field to grow and fill space
 }));
 
 const StyledSelect = styled(Select)(() => ({
   height: '56px',
   fontSize: '1rem',
   fontWeight: 400,
+  backgroundColor: '#333',
+  color: 'white',
   '& .MuiSelect-select': {
-    color: 'white',
-    backgroundColor: '#333',
     padding: '16px 14px',
   },
   '& .MuiOutlinedInput-notchedOutline': {
-    border: 'none',
+    borderColor: 'transparent',
+  },
+  '&:hover': {
+    backgroundColor: '#404040',
   },
   '&:hover .MuiOutlinedInput-notchedOutline': {
-    border: 'none',
+    borderColor: 'transparent',
   },
   '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-    border: 'none',
+    borderColor: '#0096FF',
   },
   '& .MuiSelect-icon': {
-    color: 'white',
+    color: 'rgba(255, 255, 255, 0.54)',
   },
-  '&.MuiOutlinedInput-root': {
-    '& fieldset': {
-      border: 'none',
-    },
-  },
-  '& .MuiMenu-paper': {
-    backgroundColor: '#141414',
-  },
-  '& .MuiMenuItem-root:hover': {
-    backgroundColor: '#b20710',
-  }
 }));
 
 const StyledFormControl = styled(FormControl)(() => ({
+  minWidth: '200px',
+  flex: '0 0 200px',
   '& .MuiInputLabel-root': {
-    color: 'rgba(255, 255, 255, 0.7)',
+    transform: 'translate(14px, -20px) scale(0.75)',
     '&.Mui-focused': {
-      color: '#e50914',
-    },
+      color: '#1976d2',
+    }
   },
-  '& .MuiFormLabel-root': {
-    transform: 'translate(0, -20px) scale(0.85)',
-    '&.MuiInputLabel-shrink': {
-      transform: 'translate(0, -20px) scale(0.85)',
-    },
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: 'rgba(255, 255, 255, 0.23)',
   },
+  '& .MuiSelect-select': {
+    borderRadius: '4px',
+  }
 }));
 
 interface SearchBarProps {
-  onSearch: (query: string, recommendationCount: number) => void;
+  onSearch: (query: string, contentType: string, recommendationCount: number) => void;
+  isLoading: boolean;
 }
 
-const SearchBar = ({ onSearch }: SearchBarProps) => {
+const SearchBar = ({ onSearch, isLoading }: SearchBarProps) => {
   const [query, setQuery] = useState('');
-  const [recommendationCount, setRecommendationCount] = useState(5);
+  const [contentType, setContentType] = useState('movies');
+  const [recommendationCount, setRecommendationCount] = useState(4);
 
   const handleSearch = () => {
     if (query.trim()) {
-      onSearch(query.trim(), recommendationCount);
+      onSearch(query.trim(), contentType, recommendationCount);
     }
   };
 
@@ -98,54 +95,131 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
     }
   };
 
+  const handleContentTypeChange = (
+    event: SelectChangeEvent<unknown>
+  ) => {
+    const newContentType = event.target.value as string;
+    setContentType(newContentType);
+    
+    if (query.trim()) {
+      onSearch(query.trim(), newContentType, recommendationCount);
+    }
+  };
+
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%', mt: 10 }}>
-      <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', width: '100%' }}>
-        <Box sx={{ flex: 2 }}>
-          <StyledTextField
-            fullWidth
-            placeholder="Enter a movie or TV show title"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            onKeyPress={handleKeyPress}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={handleSearch} sx={{ color: 'white' }}>
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      gap: 3, 
+      width: '100%', 
+      mt: 10 
+    }}>
+      <Box sx={{ 
+        display: 'flex', 
+        gap: 3,
+        alignItems: 'flex-start', 
+        width: '100%',
+      }}>
+        <StyledFormControl>
+          <InputLabel sx={{ 
+            transform: 'translate(14px, -20px) scale(0.75)',
+            left: '-6%',
+            top: '-5%',
+            '&.Mui-focused': { color: '#1976d2' }
+          }}>
+            Content Type
+          </InputLabel>
+          <StyledSelect
+            value={contentType}
+            label="Content Type"
+            onChange={handleContentTypeChange}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  backgroundColor: '#141414',
+                  mt: 1,
+                  '& .MuiList-root': {
+                    padding: 0
+                  }
+                }
+              },
+              MenuListProps: {
+                disablePadding: true,
+                sx: {
+                  padding: 0
+                }
+              },
+              sx: {
+                '& .MuiList-root': {
+                  padding: 0,
+                  '& .MuiMenuItem-root': {
+                    margin: 0,
+                    width: '100%',
+                    display: 'block',
+                    padding: '8px 16px',
+                    '&:hover': {
+                      backgroundColor: '#1976d2'
+                    },
+                  }
+                }
+              }
             }}
-          />
-        </Box>
-        <Box sx={{ position: 'relative', flex: 1 }}>
+          >
+            <MenuItem value="movies">Movies</MenuItem>
+            <MenuItem value="shows">TV shows</MenuItem>
+          </StyledSelect>
+        </StyledFormControl>
+
+        <StyledTextField
+          fullWidth
+          placeholder={`Enter ${contentType === 'movies' ? 'movie' : 'TV show'}`}
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          onKeyPress={handleKeyPress}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton 
+                  onClick={handleSearch}
+                  disabled={isLoading}
+                  sx={{ color: 'white' }}
+                >
+                  {isLoading ? <CircularProgress size={24} color="inherit" /> : <SearchIcon />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        <StyledFormControl sx={{ flex: '0 0 auto' }}>
           <InputLabel 
-            id="recommendation-count-label"
             sx={{ 
-              position: 'absolute',
-              top: '-30px',
-              left: 0,
-              color: 'rgba(255, 255, 255, 0.7)',
-              fontSize: '1rem'
+              fontSize: '1rem',
+              transform: 'translate(0px, -40px) scale(0.75)',
+              left: '-6%',
+              top: '-5%',
+              '&.Mui-focused': { color: '#1976d2' }
             }}
           >
             Number of recommendations
           </InputLabel>
-          <StyledFormControl fullWidth>
-            <StyledSelect
-              labelId="recommendation-count-label"
-              value={recommendationCount}
-              onChange={(event) => setRecommendationCount(Number(event.target.value))}
-            >
-              <MenuItem value={2}>2 recommendations</MenuItem>
-              <MenuItem value={3}>3 recommendations</MenuItem>
-              <MenuItem value={4}>4 recommendations</MenuItem>
-              <MenuItem value={5}>5 recommendations</MenuItem>
-              <MenuItem value={10}>10 recommendations</MenuItem>
-            </StyledSelect>
-          </StyledFormControl>
-        </Box>
+          <StyledSelect
+            value={recommendationCount}
+            onChange={(event) => setRecommendationCount(Number(event.target.value))}
+            sx={{ 
+              width: '200px',
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'rgba(255, 255, 255, 0.23)',
+              }
+            }}
+          >
+            <MenuItem value={2}>2 recommendations</MenuItem>
+            <MenuItem value={3}>3 recommendations</MenuItem>
+            <MenuItem value={4}>4 recommendations</MenuItem>
+            <MenuItem value={5}>5 recommendations</MenuItem>
+            <MenuItem value={10}>10 recommendations</MenuItem>
+          </StyledSelect>
+        </StyledFormControl>
       </Box>
     </Box>
   );

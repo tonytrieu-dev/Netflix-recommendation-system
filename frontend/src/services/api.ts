@@ -2,23 +2,33 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:5000';
 
-export interface MovieRecommendation {
+export interface ContentRecommendation {
   title: string;
   description: string;
   similarity: number;
 }
 
 interface RecommendationResponse {
-  recommendations: MovieRecommendation[];
+  recommendations: ContentRecommendation[];
 }
 
-export async function getRecommendations(title: string, recommendationCount: number): Promise<RecommendationResponse> {
+export const getRecommendations = async (
+  title: string,
+  contentType: string = 'movies',
+  count: number = 5
+): Promise<ContentRecommendation[]> => {
   try {
-    const response = await axios.post<RecommendationResponse>(`${API_BASE_URL}/recommend`, {
-      title: title,
-      count: recommendationCount
+    const response = await axios.post(`${API_BASE_URL}/recommend`, {
+      title,
+      content_type: contentType,
+      count,
     });
-    return response.data;
+
+    if (response.data.error) {
+      throw new Error(response.data.error);
+    }
+
+    return response.data.recommendations;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.data?.error) {
